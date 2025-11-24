@@ -1,14 +1,15 @@
 <html>
     <head>
         <title>huehue</title>
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
-        <script src="lessons.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>#
+        <script src="server.js"></script>
         <link rel="stylesheet" href="a.css">
     </head>
     <body>
         <div id="app">
             <header>
                 <h1 v-text="sitename"></h1>
+                <div id="item-list"></div>
                 <button v-on:click="showShopCart()" id="shopCartButton" hidden="true">
                     {{cartItemCount}}
                     <i class="fa-solid fa-cart-plus"></i>shopping cart
@@ -70,7 +71,7 @@
                         </div><br><br>
                     </div>
                 </div>
-                <div v-else>
+                <div v-else-if="showCart">
                     <h2>shopping cart</h2>
                     <div style="height: 100%">
                         <div style="height: 50%">
@@ -99,6 +100,10 @@
                                 <input v-model="order.lastName"/>
                             </p>
                             <p>
+                                <strong>phone number: </strong>
+                                <input v-model="order.phoneNum"/>
+                            </p>
+                            <p>
                                 <strong>address: </strong>
                                 <input v-model="order.address"/>
                             </p>
@@ -106,47 +111,21 @@
                                 <strong>city: </strong>
                                 <input v-model="order.city"/>
                             </p>
-                            <p>
-                                <strong>state: </strong>
-                                <select v-model="order.state">
-                                    <option disabled value="">state</option>
-                                    <option v-for="(state, key) in states" v-bind:value="state">{{key}}</option>
-                                </select>
-                            </p>
-                            <p>
-                                <strong>zip postal code: </strong>
-                                <input v-model="order.zip"/>
-                            </p>
-                            <p>
-                                <input type="checkbox" id="gift" value="true" v-model="order.gift"
-                                v-bind:true-value="order.sendGift"
-                                v-bind:false-value="order.dontSendGift">
-                                <label for="gift">ship as gift?</label>
-                            </p>
-                            <p>
-                                <input type="radio" id="home" value="home" v-model="order.method"/>
-                                <label for="home">home</label>
-                            </p>
-                            <p>
-                                <input type="radio" id="business" value="business" v-model="order.method"/>
-                                <label for="business">business</label>
-                            </p>
 
-                            <button v-on:click="submitForm">
+                            <button v-on:click="submitForm" :disabled="!enableOrder()">
                                 place order
-                            </button> 
+                            </button>
                         </div><br><br>
                     </div>
                     
+                </div>
+                <div v-else>
                     <h2>order information</h2>
                     <p>first name: {{order.firstName}}</p>
                     <p>last name: {{order.lastName}}</p>
                     <p>address: {{order.address}}</p>
                     <p>city: {{order.city}}</p>
-                    <p>zip: {{order.zip}}</p>
-                    <p>state: {{order.state}}</p>
-                    <p>gift: {{order.gift}}</p>
-                    <p>method: {{order.method}}</p>
+                   
                 </div>
             </main>
         </div>
@@ -156,18 +135,16 @@
                 el:'#app',
                 data: {
                     sitename: 'huehue',
-                    lessons: lessons,
+                    lessons: [],
                     cart:[],
                     showLesson:true,
+                    showCart: false,
                     order:{
                         firstName:'',
                         lastName:'',
+                        phoneNum: '',
                         address:'',
-                        city:'',
-                        zip:'',
-                        method:'home',
-                        sendGift: 'send as a gift',
-                        dontSendGift: 'do not send as a gift'
+                        city:''
                     },
                     states: {
                         AL: 'Alabama',
@@ -190,9 +167,21 @@
                     },
                     showShopCart(){
                         this.showLesson = this.showLesson ? false:true;
+                        this.showCart = this.showCart ? false:true;
+                    },
+                    showOrder(){
+                        this.showCart = this.showCart ? false:true;
+                        const shopCartButton = document.getElementById('shopCartButton');
+                        shopCartButton.hidden = true;
+                    },
+                    enableOrder() {
+                        const regexName = /^[A-Za-z]+$/;
+                        const regexNum = /^\d+$/;
+                        return regexName.test(this.order.firstName) && regexNum.test(this.order.phoneNum);
                     },
                     submitForm(){
                         alert('order submitted !!');
+                        this.showCart = this.showCart ? false:true;
                     },
                     canAddToCart(lesson){
                         return lesson.availability>this.cartCount(lesson);
