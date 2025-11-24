@@ -18,13 +18,13 @@
                 <div v-if="showLesson">
                     <div id="sortArea">
                         <p>sort by</p><br>
-                        <input type="radio" id="subject" name="sortCategory" value="subject">
+                        <input type="radio" id="subject" name="sortCategory" value="subject" v-on:click="sortLessons('subject')">
                         <label for="subject">subject</label><br>
-                        <input type="radio" id="location" name="sortCategory" value="location">
+                        <input type="radio" id="location" name="sortCategory" value="location" v-on:click="sortLessons('location')">
                         <label for="location">location</label><br>
-                        <input type="radio" id="price" name="sortCategory" value="price">
+                        <input type="radio" id="price" name="sortCategory" value="price" v-on:click="sortLessons('price')">
                         <label for="price">price</label><br>
-                        <input type="radio" id="availability" name="sortCategory" value="availability">
+                        <input type="radio" id="availability" name="sortCategory" value="availability" v-on:click="sortLessons('availability')">
                         <label for="availability">availability</label>
                         <br><br>
                         
@@ -208,6 +208,25 @@
                     },
                     changeBG(){
                         document.getElementById("sortArea").style.backgroundColor = "lightblue";
+                    },
+                    sortLessons(category) {
+                        this.currentSortCategory = category;
+                        this.lessons.sort((a, b) => {
+                            let valA = a[category];
+                            let valB = b[category];
+
+                            if (typeof valA === 'string' && typeof valB === 'string') {
+                                valA = valA.toLowerCase();
+                                valB = valB.toLowerCase();
+                            }
+
+                            if (valA > valB) return 1;
+                            if (valB > valA) return -1;
+                            return 0;
+                        });
+                    },
+                    sortReverse() {
+                        this.lessons.reverse();
                     }
                 },
                 computed:{
