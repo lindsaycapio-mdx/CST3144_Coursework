@@ -1,0 +1,231 @@
+<html>
+    <head>
+        <title>huehue</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+        <script src="lessons.js"></script>
+        <link rel="stylesheet" href="a.css">
+    </head>
+    <body>
+        <div id="app">
+            <header>
+                <h1 v-text="sitename"></h1>
+                <button v-on:click="showShopCart()" id="shopCartButton" hidden="true">
+                    {{cartItemCount}}
+                    <i class="fa-solid fa-cart-plus"></i>shopping cart
+                </button>
+            </header>
+            <main>
+                <div v-if="showLesson">
+                    <div id="sortArea">
+                        <p>sort by</p><br>
+                        <input type="radio" id="subject" name="sortCategory" value="subject">
+                        <label for="subject">subject</label><br>
+                        <input type="radio" id="location" name="sortCategory" value="location">
+                        <label for="location">location</label><br>
+                        <input type="radio" id="price" name="sortCategory" value="price">
+                        <label for="price">price</label><br>
+                        <input type="radio" id="availability" name="sortCategory" value="availability">
+                        <label for="availability">availability</label>
+                        <br><br>
+                        
+                        <p>order:</p><br>
+                        <input type="radio" id="ascending" name="sortOrder" value="ascending">
+                        <label for="ascending">ascending</label><br>
+                        <input type="radio" id="descending" name="sortOrder" value="descending" v-on:click="sortReverse">
+                        <label for="descending">descending</label>
+                    </div>
+                    <div id="lessonArea">
+                        <div id="lessonBlock" v-for="lesson in lessons">
+                            <div id="lessonImage">
+                                <img style="width: 205px" v-bind:src="lesson.image">
+                            </div>
+                            <div id="lessonContent">
+                                <h2 v-text="lesson.subject"></h2>
+                                <p v-html="lesson.location"></p>
+                                <p>price: {{lesson.price}} </p>
+                                <p>available stock: {{lesson.availability - cartCount (lesson)}}</p>
+                                
+                                <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson)">
+                                    add to cart
+                                </button> 
+                                <button disabled ="disabled" v-else>
+                                    out of stock
+                                </button>
+                                
+                                <span v-if="lesson.availability === cartCount(lesson)">
+                                    all out !!
+                                </span>
+                                <span v-else-if="lesson.availability - cartCount(lesson) < 5">
+                                    only {{lesson.availability - cartCount (lesson)}} left !!
+                                </span>
+                                <span v-else>
+                                    buy now !!
+                                </span>
+                                
+                                <div>
+                                    <span v-for="n in lesson.rating">★</span>
+                                    <span v-for="n in 5 - lesson.rating">☆</span>
+                                </div>
+                            </div>
+                        </div><br><br>
+                    </div>
+                </div>
+                <div v-else>
+                    <h2>shopping cart</h2>
+                    <div style="height: 100%">
+                        <div style="height: 50%">
+                            <div id="cartBlock" v-for="lesson in cart">
+                                <div id="lessonImage">
+                                    <img style="width: 205px" v-bind:src="lesson.image">
+                                </div>
+                                <div id="lessonContent">
+                                    <h2 v-text="lesson.subject"></h2>
+                                    <p v-html="lesson.location"></p>
+                                    <p>price: {{lesson.price}} </p>
+                                    <button v-on:click="removeCart(lesson)">
+                                        remove
+                                    </button>                           
+                                </div>
+                            </div><br><br>
+                        </div>
+                    
+                        <div id="checkout">
+                            <p>
+                                <strong>first name: </strong>
+                                <input v-model="order.firstName"/>
+                            </p>
+                            <p>
+                                <strong>last name: </strong>
+                                <input v-model="order.lastName"/>
+                            </p>
+                            <p>
+                                <strong>address: </strong>
+                                <input v-model="order.address"/>
+                            </p>
+                            <p>
+                                <strong>city: </strong>
+                                <input v-model="order.city"/>
+                            </p>
+                            <p>
+                                <strong>state: </strong>
+                                <select v-model="order.state">
+                                    <option disabled value="">state</option>
+                                    <option v-for="(state, key) in states" v-bind:value="state">{{key}}</option>
+                                </select>
+                            </p>
+                            <p>
+                                <strong>zip postal code: </strong>
+                                <input v-model="order.zip"/>
+                            </p>
+                            <p>
+                                <input type="checkbox" id="gift" value="true" v-model="order.gift"
+                                v-bind:true-value="order.sendGift"
+                                v-bind:false-value="order.dontSendGift">
+                                <label for="gift">ship as gift?</label>
+                            </p>
+                            <p>
+                                <input type="radio" id="home" value="home" v-model="order.method"/>
+                                <label for="home">home</label>
+                            </p>
+                            <p>
+                                <input type="radio" id="business" value="business" v-model="order.method"/>
+                                <label for="business">business</label>
+                            </p>
+
+                            <button v-on:click="submitForm">
+                                place order
+                            </button> 
+                        </div><br><br>
+                    </div>
+                    
+                    <h2>order information</h2>
+                    <p>first name: {{order.firstName}}</p>
+                    <p>last name: {{order.lastName}}</p>
+                    <p>address: {{order.address}}</p>
+                    <p>city: {{order.city}}</p>
+                    <p>zip: {{order.zip}}</p>
+                    <p>state: {{order.state}}</p>
+                    <p>gift: {{order.gift}}</p>
+                    <p>method: {{order.method}}</p>
+                </div>
+            </main>
+        </div>
+
+        <script type="text/javascript">
+            let webstore = new Vue({
+                el:'#app',
+                data: {
+                    sitename: 'huehue',
+                    lessons: lessons,
+                    cart:[],
+                    showLesson:true,
+                    order:{
+                        firstName:'',
+                        lastName:'',
+                        address:'',
+                        city:'',
+                        zip:'',
+                        method:'home',
+                        sendGift: 'send as a gift',
+                        dontSendGift: 'do not send as a gift'
+                    },
+                    states: {
+                        AL: 'Alabama',
+                        AR: 'Arizona',
+                        CA: 'California',
+                        NV: 'Nevada'
+                    }
+                },
+                methods:{
+                    addToCart(lesson){
+                        const shopCartButton = document.getElementById('shopCartButton');
+                        shopCartButton.hidden = false;
+                        this.cart.push(lesson);
+                    },
+                    removeCart(lesson){
+                        let index = this.cart.indexOf(lesson);
+                        if (index > -1) {
+                            this.cart.splice(index, 1);
+                        }
+                    },
+                    showShopCart(){
+                        this.showLesson = this.showLesson ? false:true;
+                    },
+                    submitForm(){
+                        alert('order submitted !!');
+                    },
+                    canAddToCart(lesson){
+                        return lesson.availability>this.cartCount(lesson);
+                    },
+                    cartCount(lesson){
+                        let count = 0;
+                        for (let i = 0; i < this.cart.length; i++){
+                            if (this.cart[i] === lesson){
+                                count++;
+                            }
+                        }
+                        return count;
+                    },
+                    changeBG(){
+                        document.getElementById("sortArea").style.backgroundColor = "lightblue";
+                    }
+                },
+                computed:{
+                    cartItemCount: function() { 
+                        return this.cart.length || "";
+                    },
+                    canAddToCart: function(){
+                        return this.lesson.availability > this.cartItemCount;
+                    },
+                    itemsLeft() {
+                        return this.lesson.availability - this.cartItemCount;
+                    },
+                    cartNotEmpty() {
+                        return cartCount != 0;
+                    }
+                }
+            }
+        );
+        </script>
+    </body>
+</html>
