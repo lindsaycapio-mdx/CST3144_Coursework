@@ -234,6 +234,26 @@
                 }
             }
         );
+        fetch('http://localhost:3000/collection/Lessons', {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    webstore.lessons = data.map(item => {
+                        return {
+                            id: item.id,
+                            subject: item.subject,
+                            location: item.location,
+                            price: item.price,
+                            image: item.image,
+                            availability: item.availability,
+                            rating: item.rating
+                        };
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         </script>
     </body>
 </html>
