@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>huehue</title>
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>#
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
         <script src="server.js"></script>
         <link rel="stylesheet" href="a.css">
     </head>
@@ -180,8 +180,41 @@
                         return regexName.test(this.order.firstName) && regexNum.test(this.order.phoneNum);
                     },
                     submitForm(){
-                        alert('order submitted !!');
+                        alert("order submitted !!");
                         this.showCart = this.showCart ? false:true;
+
+                        let orderedLessons = webstore.cart.map(item => item.subject);
+
+                        let itemCount = {};
+                        for (let item of orderedLessons) {
+                            itemCount[item] = (itemCount[item] || 0) + 1;
+                        }
+
+                        let lessonCount = [];
+                        let lessonIds = [];
+
+                        for (const item in itemCount) {
+                            lessonCount.push(`${item} x ${itemCount[item]}`);
+                            lessonIds.push(`${item} x ${itemCount[item]}`);
+                        }
+
+                        const newOrder = {name: this.order.firstName, phoneNum: this.order.phoneNum,
+                            lessonIDs: lessonCount, numOfSpaces: orderedLessons.length};
+
+                        fetch('http://localhost:3000/collection/Orders', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newOrder),
+                        })
+                        .then(response => response.json())
+                        .then(responseJSON => {
+                            document.getElementById('response').innerText = JSON.stringify(responseJSON);
+                        })
+                        .catch((error) => {
+                            document.getElementById('error').innerText = error;
+                        });
                     },
                     canAddToCart(lesson){
                         return lesson.availability>this.cartCount(lesson);
