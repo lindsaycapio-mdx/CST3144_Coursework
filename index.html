@@ -204,7 +204,7 @@
                         const newOrder = {name: this.order.firstName, phoneNum: this.order.phoneNum,
                             lessonIDs: lessonCount, numOfSpaces: orderedLessons.length};
 
-                        fetch('http://localhost:3000/collection/Orders', {
+                        fetch('https://cst3144-backend-1-ckst.onrender.com/collection/Orders', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -221,13 +221,13 @@
 
                         for (let i = 0; i < orderedIDs.length; i++) {
                             const lessonId = orderedIDs[i];
-                            fetch(`http://localhost:3000/collection/Lessons/${lessonId}/`)
+                            fetch(`https://cst3144-backend-1-ckst.onrender.com/collection/Lessons/${lessonId}/`)
                                 .then(response => response.json())
                                 .then(lessonData => {
                                 const currentAvailability = lessonData.availability;
                                 const newAvailability = currentAvailability - 1;
 
-                                fetch(`http://localhost:3000/collection/Lessons/${lessonId}/`, {
+                                fetch(`https://cst3144-backend-1-ckst.onrender.com/collection/Lessons/${lessonId}/`, {
                                     method: 'PUT',
                                     headers: {
                                     'Content-Type': 'application/json',
@@ -250,7 +250,7 @@
                     searchLessons(){
                         let userSearch = document.querySelector("#searchArea").value.toLowerCase();
 
-                        fetch(`http://localhost:3000/search/Lessons?search=${userSearch}`, {
+                        fetch(`https://cst3144-backend-1-ckst.onrender.com/search/Lessons?search=${userSearch}`, {
                             method: 'GET'
                         })
                         .then(response => response.json())
@@ -308,7 +308,7 @@
                     }
                 }
             });
-            fetch('http://localhost:3000/collection/Lessons', {
+            fetch('https://cst3144-backend-1-ckst.onrender.com/collection/Lessons', {
                 method: 'GET'
             })
             .then(response => response.json())
