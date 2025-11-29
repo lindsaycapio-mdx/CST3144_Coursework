@@ -89,20 +89,20 @@
                         <input id="searchArea" type="text" placeholder="search.." v-on:keyup="searchLessons()">
 
                         <p>sort by</p><br>
-                        <input type="radio" id="subject" name="sortCategory" value="subject" v-on:click="sortLessons('subject')">
+                        <input type="radio" id="subject" name="sortCategory" value="subject" v-on:click="sortLessons()" checked>
                         <label for="subject">subject</label><br>
-                        <input type="radio" id="location" name="sortCategory" value="location" v-on:click="sortLessons('location')">
+                        <input type="radio" id="location" name="sortCategory" value="location" v-on:click="sortLessons()">
                         <label for="location">location</label><br>
-                        <input type="radio" id="price" name="sortCategory" value="price" v-on:click="sortLessons('price')">
+                        <input type="radio" id="price" name="sortCategory" value="price" v-on:click="sortLessons()">
                         <label for="price">price</label><br>
-                        <input type="radio" id="availability" name="sortCategory" value="availability" v-on:click="sortLessons('availability')">
+                        <input type="radio" id="availability" name="sortCategory" value="availability" v-on:click="sortLessons()">
                         <label for="availability">availability</label>
                         <br><br>
                         
                         <p>order:</p><br>
-                        <input type="radio" id="ascending" name="sortOrder" value="ascending">
+                        <input type="radio" id="ascending" name="sortOrder" value="ascending" v-on:click="sortLessons()" checked>
                         <label for="ascending">ascending</label><br>
-                        <input type="radio" id="descending" name="sortOrder" value="descending" v-on:click="sortReverse">
+                        <input type="radio" id="descending" name="sortOrder" value="descending" v-on:click="sortLessons()">
                         <label for="descending">descending</label>
                     </div>
                     <div id="lessonArea">
@@ -341,24 +341,40 @@
                         }
                         return count;
                     },
-                    sortLessons(category) {
-                        this.currentSortCategory = category;
-                        this.lessons.sort((a, b) => {
-                            let valA = a[category];
-                            let valB = b[category];
+                    sortLessons() {
+                        let category = document.querySelector('input[name="sortCategory"]:checked').value;
+                        let sortOrder = document.querySelector('input[name="sortOrder"]:checked').value;
 
-                            if (typeof valA === 'string' && typeof valB === 'string') {
-                                valA = valA.toLowerCase();
-                                valB = valB.toLowerCase();
-                            }
+                        if (sortOrder === "ascending"){
+                            this.lessons.sort((a, b) => {
+                                let valA = a[category];
+                                let valB = b[category];
 
-                            if (valA > valB) return 1;
-                            if (valB > valA) return -1;
-                            return 0;
-                        });
-                    },
-                    sortReverse() {
-                        this.lessons.reverse();
+                                if (typeof valA === 'string' && typeof valB === 'string') {
+                                    valA = valA.toLowerCase();
+                                    valB = valB.toLowerCase();
+                                }
+
+                                if (valA > valB) return 1;
+                                if (valB > valA) return -1;
+                                return 0;
+                            });
+                        }
+                        else{
+                            this.lessons.sort((a, b) => {
+                                let valA = b[category];
+                                let valB = a[category];
+
+                                if (typeof valA === 'string' && typeof valB === 'string') {
+                                    valA = valA.toLowerCase();
+                                    valB = valB.toLowerCase();
+                                }
+
+                                if (valA > valB) return 1;
+                                if (valB > valA) return -1;
+                                return 0;
+                            });
+                        }                        
                     }
                 },
                 computed:{
