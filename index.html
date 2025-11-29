@@ -18,6 +18,8 @@
             <main>
                 <div v-if="showLesson">
                     <div id="sortArea">
+                        <input id="searchArea" type="text" placeholder="search.." v-on:keyup="searchLessons()">
+
                         <p>sort by</p><br>
                         <input type="radio" id="subject" name="sortCategory" value="subject" v-on:click="sortLessons('subject')">
                         <label for="subject">subject</label><br>
@@ -245,6 +247,20 @@
                             });
                         }
                     },
+                    searchLessons(){
+                        let userSearch = document.querySelector("#searchArea").value.toLowerCase();
+
+                        fetch(`http://localhost:3000/search/Lessons?search=${userSearch}`, {
+                            method: 'GET'
+                        })
+                        .then(response => response.json())
+                        .then(responseJSON => {
+                            this.lessons = responseJSON;
+                        })
+                        .catch((error) => {
+                            document.getElementById('error').innerText = error;
+                        });
+                    },
                     canAddToCart(lesson){
                         return lesson.availability>this.cartCount(lesson);
                     },
@@ -256,9 +272,6 @@
                             }
                         }
                         return count;
-                    },
-                    changeBG(){
-                        document.getElementById("sortArea").style.backgroundColor = "lightblue";
                     },
                     sortLessons(category) {
                         this.currentSortCategory = category;
@@ -294,29 +307,29 @@
                         return cartCount != 0;
                     }
                 }
-            }
-        );
-        fetch('http://localhost:3000/collection/Lessons', {
-                    method: 'GET'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    webstore.lessons = data.map(item => {
-                        return {
-                            _id: item._id,
-                            id: item.id,
-                            subject: item.subject,
-                            location: item.location,
-                            price: item.price,
-                            image: item.image,
-                            availability: item.availability,
-                            rating: item.rating
-                        };
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
+            });
+            fetch('http://localhost:3000/collection/Lessons', {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                webstore.lessons = data.map(item => {
+                    return {
+                        _id: item._id,
+                        id: item.id,
+                        subject: item.subject,
+                        location: item.location,
+                        price: item.price,
+                        image: item.image,
+                        availability: item.availability,
+                        rating: item.rating
+                    };
                 });
+                webstore.lessons = webstore.lessons;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            }); 
         </script>
     </body>
 </html>
