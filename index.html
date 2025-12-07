@@ -1,200 +1,266 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <title>huehue</title>
+        <title>Capi: Shop for Lessons!</title>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
         <script src="server.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
         <style>
             #lessonBlock, #cartBlock {
-                background-color: rgb(230, 213, 167);
+                background-color: #f5f5f5;
+                border: 2px solid #e4e4e4;
                 border-radius: 15px;
-                border-color: rgb(183, 150, 104);
-                border-style: solid;
-                border-width: 5px;
                 padding: 15px;
-                overflow:auto;
                 float: left;
             }
-            #lessonBlock {
-                margin-left: 50px;  
+            #lessonBlock{
+                height: 250px;
+                width: 400px; 
                 margin: 15px;
             }
             #cartBlock {
+                height: 200px;
+                width: 320px;
                 margin: 5px;
             }
             #checkout {
-                background-color: rgb(230, 213, 167);
-                border-radius: 15px;
-                border-color: rgb(183, 150, 104);
-                border-style: solid;
-                border-width: 5px;
-                width: 95%;
-                height: 50%;
-                padding: 15px;
-                margin: auto;
-            }
-            #lessonContent {
-                margin-left: 15px;
+                width: 50%;
                 float: left;
             }
+            #checkoutBlock {
+                background-color: #f5f5f5;
+                border: 2px solid #e4e4e4;
+                border-radius: 15px;
+                width: 95%;
+                padding: 15px;
+                float: left;
+            }
+            #lessonContent, #cartContent {
+                margin-top: 20px;
+                margin-left: 25px;
+                float: left;
+            }
+            #lessonContent {
+                margin-top: 20px;
+            }
+            #cartContent {
+                margin-top: 35px;
+            }
             #lessonImage{
-                margin-left: auto;
+                margin-top: 30px;
+                margin-left: 10px;
                 float: left;
             }
             #sortArea{
-                width: 20%;
-                background-color: rgb(235, 216, 189);
-                height: 100%;
-                overflow: auto;
+                padding: 15px;
+                margin: auto;
+                margin-top: 30px;
+                width: 80%;
+                color: white;
+            }
+            #sortBG{
+                width: 24%;
+                background-color: #464c83;
+                height: 100vh;
                 float: left;
+                border-right: 1px solid #9a9a9a;
             }
             #lessonArea{
-                width: 75%;
+                width: 62%;
                 background-color: white;
-                height: 100%;
+                height: 80vh;
                 float: left;
+                justify-content: center;
+                overflow: auto;
             }
-            h1, h2, p, label{
-                font-family: calibri;
+            #cartArea{
+                width: 49%;
+                margin:5px;
+                background-color: white;
+                height: 74vh;
+                float: left;
+                justify-content: center;
+                overflow: auto;
+            }
+            #searchArea{
+                padding: 10px;
+                border-radius: 5px;
+                border-style: solid;
+                border-color: #ffffff;
+                width: 200px;
+            }
+            h1, h2, p, label, strong, button{
+                font-family: verdana;
+            }
+            hr{
+                margin-bottom: 0;
+            }
+            p{
+                font-size: 15px;
+            }
+            span{
+                font-family: verdana;
+                font-size: 12px;
+                margin-left: 5px;
+                color: #454545;
             }
             header{
                 width: 100%;
                 text-align: center;
-                background-color: rgb(183, 150, 104);
-                font-size: 30px;
+                background-color: #f6f7ee;
+                font-size: 20px;
+            }
+            button{
+                padding: 10px;
+                border-radius: 5px;
+                border: 2px solid #8a8da8;
+                background-color: #ffffff;
+                color: black;
+            }
+            button:disabled {
+                border: 2px solid #9a9a9a;
+                background-color: #cfcfcf;
+                color: #454545;
             }
             main{
                 width: 100%;
-                height: 100%;
-                min-height: 100%;
+                height: 100vh;
+                min-height: 100vh;
             }
             html, body{
                 padding: 0;
                 margin: 0;
+                overflow: hidden;
             }
         </style>
     </head>
     <body>
         <div id="app">
             <header>
+                <br>
                 <h1 v-text="sitename"></h1>
-                <div id="item-list"></div>
-                <button v-on:click="showShopCart()" id="shopCartButton" hidden="true">
-                    {{cartItemCount}}
-                    <i class="fa-solid fa-cart-plus"></i>shopping cart
-                </button>
+                    <button v-on:click="showShopCart()" id="shopCartButton" hidden="true">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        {{cartItemCount}} Shopping Cart
+                    </button>
+                <hr>
             </header>
             <main>
-                <div v-if="showLesson">
-                    <div id="sortArea">
-                        <input id="searchArea" type="text" placeholder="search.." v-on:keyup="searchLessons()">
-
-                        <p>sort by</p><br>
-                        <input type="radio" id="subject" name="sortCategory" value="subject" v-on:click="sortLessons()" checked>
-                        <label for="subject">subject</label><br>
-                        <input type="radio" id="location" name="sortCategory" value="location" v-on:click="sortLessons()">
-                        <label for="location">location</label><br>
-                        <input type="radio" id="price" name="sortCategory" value="price" v-on:click="sortLessons()">
-                        <label for="price">price</label><br>
-                        <input type="radio" id="availability" name="sortCategory" value="availability" v-on:click="sortLessons()">
-                        <label for="availability">availability</label>
-                        <br><br>
-                        
-                        <p>order:</p><br>
-                        <input type="radio" id="ascending" name="sortOrder" value="ascending" v-on:click="sortLessons()" checked>
-                        <label for="ascending">ascending</label><br>
-                        <input type="radio" id="descending" name="sortOrder" value="descending" v-on:click="sortLessons()">
-                        <label for="descending">descending</label>
+                <div style="height: 100vh;" v-if="showLesson">
+                    <div id="sortBG">
+                        <div id="sortArea">
+                            <input id="searchArea" type="text" placeholder="Search.." v-on:keyup="searchLessons()">
+                            <br><br>
+                            <p>Sort by:</p><br>
+                            <input type="radio" id="subject" name="sortCategory" value="subject" v-on:click="sortLessons()">
+                            <label for="subject">Subject</label><br>
+                            <input type="radio" id="location" name="sortCategory" value="location" v-on:click="sortLessons()">
+                            <label for="location">Location</label><br>
+                            <input type="radio" id="price" name="sortCategory" value="price" v-on:click="sortLessons()">
+                            <label for="price">Price</label><br>
+                            <input type="radio" id="availability" name="sortCategory" value="availability" v-on:click="sortLessons()" checked>
+                            <label for="availability">Availability</label>
+                            <br><br>
+                            
+                            <p>Order:</p><br>
+                            <input type="radio" id="ascending" name="sortOrder" value="ascending" v-on:click="sortLessons()" checked>
+                            <label for="ascending">Ascending</label><br>
+                            <input type="radio" id="descending" name="sortOrder" value="descending" v-on:click="sortLessons()">
+                            <label for="descending">Descending</label>
+                        </div>
                     </div>
+                
                     <div id="lessonArea">
                         <div id="lessonBlock" v-for="lesson in lessons">
                             <div id="lessonImage">
-                                <img style="width: 205px" v-bind:src="lesson.image">
+                                <img style="width: 190px" v-bind:src="lesson.image">
                             </div>
                             <div id="lessonContent">
-                                <h2 v-text="lesson.subject"></h2>
+                                <strong v-text="lesson.subject"></strong>
                                 <p v-html="lesson.location"></p>
-                                <p>price: {{lesson.price}} </p>
-                                <p>available stock: {{lesson.availability - cartCount (lesson)}}</p>
+                                <p>Price: {{lesson.price}} </p>
+                                <p>Available Stock: {{lesson.availability - cartCount (lesson)}}</p>
                                 
                                 <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson)">
-                                    add to cart
+                                    Add to cart
                                 </button> 
                                 <button disabled ="disabled" v-else>
-                                    out of stock
+                                    Out of stock
                                 </button>
                                 
                                 <span v-if="lesson.availability === cartCount(lesson)">
-                                    all out !!
+                                    All out !!
                                 </span>
                                 <span v-else-if="lesson.availability - cartCount(lesson) < 5">
-                                    only {{lesson.availability - cartCount (lesson)}} left !!
+                                    Only {{lesson.availability - cartCount (lesson)}} left!
                                 </span>
                                 <span v-else>
-                                    buy now !!
+                                    Buy now !!
                                 </span>
-                                
-                                <div>
-                                    <span v-for="n in lesson.rating">★</span>
-                                    <span v-for="n in 5 - lesson.rating">☆</span>
+                                <div style="margin-top: 13px;">
+                                    <span style="font-size: 20px;" v-for="n in lesson.rating"><i class="fas fa-star"></i></span>
+                                    <span style="font-size: 20px;" v-for="n in 5 - lesson.rating"><i class="far fa-star"></i></span>
                                 </div>
                             </div>
                         </div><br><br>
                     </div>
                 </div>
                 <div v-else-if="showCart">
-                    <h2>shopping cart</h2>
-                    <div style="height: 100%">
-                        <div style="height: 50%">
+                    <div style="height: 100vh">
+                        <div id="cartArea">
+                            <p>Shopping Cart</p>
                             <div id="cartBlock" v-for="lesson in cart">
                                 <div id="lessonImage">
-                                    <img style="width: 205px" v-bind:src="lesson.image">
+                                    <img style="width: 150px" v-bind:src="lesson.image">
                                 </div>
-                                <div id="lessonContent">
-                                    <h2 v-text="lesson.subject"></h2>
-                                    <p v-html="lesson.location"></p>
-                                    <p>price: {{lesson.price}} </p>
+                                <div id="cartContent">
+                                    <strong v-text="lesson.subject"></strong>
+                                    <p style="font-size: 12px" v-html="lesson.location"></p>
+                                    <p style="font-size: 12px">Price: {{lesson.price}} </p>
                                     <button v-on:click="removeCart(lesson)">
-                                        remove
+                                        Remove
                                     </button>                           
                                 </div>
                             </div><br><br>
                         </div>
-                    
                         <div id="checkout">
-                            <p>
-                                <strong>first name: </strong>
-                                <input v-model="order.firstName"/>
-                            </p>
-                            <p>
-                                <strong>last name: </strong>
-                                <input v-model="order.lastName"/>
-                            </p>
-                            <p>
-                                <strong>phone number: </strong>
-                                <input v-model="order.phoneNum"/>
-                            </p>
-                            <p>
-                                <strong>address: </strong>
-                                <input v-model="order.address"/>
-                            </p>
-                            <p>
-                                <strong>city: </strong>
-                                <input v-model="order.city"/>
-                            </p>
+                            <p>Checkout Details</p>
+                            <div id="checkoutBlock">
+                                <p>
+                                    First Name: 
+                                    <input v-model="order.firstName"/>
+                                </p>
+                                <p>
+                                    Last Name: 
+                                    <input v-model="order.lastName"/>
+                                </p>
+                                <p>
+                                    Phone Number: 
+                                    <input v-model="order.phoneNum"/>
+                                </p>
+                                <p>
+                                    Address: 
+                                    <input v-model="order.address"/>
+                                </p>
+                                <p>
+                                    City: 
+                                    <input v-model="order.city"/>
+                                </p>
 
-                            <button v-on:click="submitForm" :disabled="!enableOrder()">
-                                place order
-                            </button>
-                        </div><br><br>
+                                <button v-on:click="submitForm" :disabled="!enableOrder()">
+                                    Place order
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                 </div>
                 <div v-else>
-                    <h2>order information</h2>
-                    <p>first name: {{order.firstName}}</p>
-                    <p>last name: {{order.lastName}}</p>
-                    <p>address: {{order.address}}</p>
-                    <p>city: {{order.city}}</p>
+                    <h2>Order Information</h2>
+                    <p>First Name: {{order.firstName}}</p>
+                    <p>Last Name: {{order.lastName}}</p>
+                    <p>Address: {{order.address}}</p>
+                    <p>City: {{order.city}}</p>
                    
                 </div>
             </main>
@@ -204,7 +270,7 @@
             let webstore = new Vue({
                 el:'#app',
                 data: {
-                    sitename: 'huehue',
+                    sitename: 'Capi',
                     lessons: [],
                     cart:[],
                     showLesson:true,
