@@ -46,7 +46,7 @@
             #cartContent {
                 margin-top: 35px;
             }
-            #lessonImage{
+            .lessonImage{
                 margin-top: 30px;
                 margin-left: 10px;
                 float: left;
@@ -172,7 +172,7 @@
                 
                     <div id="lessonArea">
                         <div id="lessonBlock" v-for="lesson in lessons">
-                            <div id="lessonImage">
+                            <div class="lessonImage">
                                 <img style="width: 150px" v-bind:src="'https://cst3144-backend-1-ckst.onrender.com'+'/' + lesson.image">
                             </div>
                             <div id="lessonContent">
@@ -210,8 +210,8 @@
                         <div id="cartArea">
                             <p>Shopping Cart</p>
                             <div id="cartBlock" v-for="lesson in cart">
-                                <div id="lessonImage">
-                                    <img style="width: 150px" v-bind:src="lesson.image">
+                                <div class="lessonImage">
+                                    <img style="width: 150px" v-bind:src="'https://cst3144-backend-1-ckst.onrender.com'+'/' + lesson.image">
                                 </div>
                                 <div id="cartContent">
                                     <strong v-text="lesson.subject"></strong>
