@@ -173,7 +173,7 @@
                     <div id="lessonArea">
                         <div id="lessonBlock" v-for="lesson in lessons">
                             <div id="lessonImage">
-                                <img style="width: 190px" v-bind:src="lesson.image">
+                                <img style="width: 150px" v-bind:src="'https://cst3144-backend-1-ckst.onrender.com'+'/' + lesson.image">
                             </div>
                             <div id="lessonContent">
                                 <strong v-text="lesson.subject"></strong>
