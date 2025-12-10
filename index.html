@@ -3,7 +3,6 @@
     <head>
         <title>Capi: Shop for Lessons!</title>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
-        <script src="server.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
         <style>
             #lessonBlock, #cartBlock {
@@ -345,11 +344,8 @@
                             body: JSON.stringify(newOrder),
                         })
                         .then(response => response.json())
-                        .then(responseJSON => {
-                            document.getElementById('response').innerText = JSON.stringify(responseJSON);
-                        })
                         .catch((error) => {
-                            document.getElementById('error').innerText = error;
+                            alert("post not successful");
                         });
 
                         for (let i = 0; i < orderedIDs.length; i++) {
@@ -368,15 +364,12 @@
                                     body: JSON.stringify({ availability: newAvailability }),
                                 })
                                 .then(response => response.json())
-                                .then(responseJSON => {
-                                    document.getElementById('response').innerText = JSON.stringify(responseJSON);
-                                })
                                 .catch((error) => {
-                                    document.getElementById('error').innerText = error;
+                                    alert("put not successful");
                                 });
                                 })
                             .catch((error) => {
-                            document.getElementById('error').innerText = error;
+                                alert("get not successful");
                             });
                         }
                     },
@@ -391,8 +384,11 @@
                             this.lessons = responseJSON;
                         })
                         .catch((error) => {
-                            document.getElementById('error').innerText = error;
+                            alert("get not successful");
                         });
+                    },
+                    canAddToCart(lesson){
+                        return lesson.availability > this.cartItemCount;
                     },
                     cartCount(lesson){
                         let count = 0;
@@ -443,9 +439,6 @@
                     cartItemCount: function() { 
                         return this.cart.length || "";
                     },
-                    canAddToCart: function(){
-                        return this.lesson.availability > this.cartItemCount;
-                    },
                     itemsLeft() {
                         return this.lesson.availability - this.cartItemCount;
                     },
@@ -473,9 +466,9 @@
                 });
                 webstore.lessons = webstore.lessons;
             })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            }); 
+            .catch((error) => {
+                alert("get not successful");
+            });
         </script>
     </body>
 </html>
